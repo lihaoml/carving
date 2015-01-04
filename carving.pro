@@ -19,10 +19,12 @@ HEADERS += PBrainExtractor.h \
            PThresholder.h \
            PVoiWidget.h \
            PVolumeSegmenter.h \
-           PVolumeViewer.h
+           PVolumeViewer.h \
+           PCarvingAlgorithm.h
 SOURCES += main.cpp \
            PBrainExtractor.cpp \
            PThresholder.cpp \
            PVoiWidget.cpp \
            PVolumeSegmenter.cpp \
-           PVolumeViewer.cpp
+           PVolumeViewer.cpp \
+           PCarvingAlgorithm.cpp 
