@@ -1,0 +1,13 @@
+main.cpp
+panax.qrc
+PBrainExtractor.cpp
+PBrainExtractor.h
+PThresholder.cpp
+PThresholder.h
+PVoiWidget.cpp
+PVoiWidget.h
+PVolumeSegmenter.cpp
+PVolumeSegmenter.h
+PVolumeViewer.cpp
+PVolumeViewer.h
+vtk.pro

@@ -1,0 +1,53 @@
+<!DOCTYPE RCC><RCC version="1.0">
+<qresource>
+    <file>images/addmesh.png</file>
+    <file>images/aniso.png</file>
+    <file>images/annotator.png</file>
+    <file>images/blockfill.png</file>
+    <file>images/bluepin.png</file>
+    <file>images/brightness.png</file>
+    <file>images/color.png</file>
+    <file>images/contrast.png</file>
+    <file>images/copy.png</file>
+    <file>images/crosshair.png</file>
+    <file>images/cut.png</file>
+    <file>images/deletemesh.png</file>
+    <file>images/download.png</file>
+    <file>images/eye.png</file>
+    <file>images/floodfill.png</file>
+    <file>images/fullblue.png</file>
+    <file>images/fullwhite.png</file>
+    <file>images/halfwhite.png</file>
+    <file>images/help.png</file>
+    <file>images/hide.png</file>
+    <file>images/info.png</file>
+    <file>images/input.png</file>
+    <file>images/list.png</file>
+    <file>images/loaddir.png</file>
+    <file>images/loadmesh.png</file>
+    <file>images/mesh.png</file>
+    <file>images/new.png</file>
+    <file>images/open.png</file>
+    <file>images/opendir.png</file>
+    <file>images/output.png</file>
+    <file>images/panax.jpg</file>
+    <file>images/panax-icon.png</file>
+    <file>images/panax-splash.jpg</file>
+    <file>images/reset.png</file>
+    <file>images/reset2.png</file>
+    <file>images/roi.png</file>
+    <file>images/roi2.png</file>
+    <file>images/save.png</file>
+    <file>images/saveas.png</file>
+    <file>images/savedir.png</file>
+    <file>images/saveview.png</file>
+    <file>images/segment.png</file>
+    <file>images/select.png</file>
+    <file>images/smooth.png</file>
+    <file>images/test.png</file>
+    <file>images/transparent.png</file>
+    <file>images/upload.png</file>
+    <file>images/viewpane.png</file>
+    <file>images/volume.png</file>
+</qresource>
+</RCC>
