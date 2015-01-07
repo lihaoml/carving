@@ -24,13 +24,17 @@ void dijkstra2D ( vtkImageData *data, int _x1, int _y1, int _x2, int _y2, int _z
     data->GetDimensions(dims);
     const int nComp = data->GetNumberOfScalarComponents();
     std::cout << "Dimensions: " << dims[0] << ", " << dims[1] << ", " << dims[2] << std::endl;
-    std::cout << "Components: " << nComp << std::endl;
-    std::cout << "Scalar Type: " << data->GetScalarTypeAsString() << std::endl;
+    
+    // std::cout << "Components: " << nComp << std::endl;
+    // std::cout << "Scalar Type: " << data->GetScalarTypeAsString() << std::endl;
     
     short* vxl = static_cast<short*>(data->GetScalarPointer());
     
     double spacing[3];
     data->GetSpacing(spacing);
+    
+    std::cout << "Spacing: " << spacing[0] << ", " << spacing[1] << ", " << spacing[2] << std::endl;
+    
     int x1 = static_cast<int> (_x1 / spacing[0]);
     int y1 = static_cast<int> (_y1 / spacing[1]);
     int z = static_cast<int> (_z / spacing[2]);
@@ -38,16 +42,16 @@ void dijkstra2D ( vtkImageData *data, int _x1, int _y1, int _x2, int _y2, int _z
     int y2 = static_cast<int> (_y2 / spacing[1]);
     
     int idx1 = z * (dims[0]*dims[1]) + y1 * dims[0] + x1;
-    std::cout << "(" << x1 << ", " << y1 << ", " << z << ") = " << vxl[idx1] << std::endl;
+    // std::cout << "(" << x1 << ", " << y1 << ", " << z << ") = " << vxl[idx1] << std::endl;
     
     int idx2 = z * (dims[0]*dims[1]) + y2 * dims[0] + x2;
-    std::cout << "(" << x2 << ", " << y2 << ", " << z << ") = " << vxl[idx2] << std::endl;
+    // std::cout << "(" << x2 << ", " << y2 << ", " << z << ") = " << vxl[idx2] << std::endl;
     
     // the small rectangular region bounded by (x1, y1) and (x2, y2)
     unsigned width = std::abs(x2 - x1) + 1;
     unsigned height = std::abs(y2 - y1) + 1;
-    std::cout << "width = " << width << std::endl;
-    std::cout << "height = " << height << std::endl;
+    // std::cout << "width = " << width << std::endl;
+    // std::cout << "height = " << height << std::endl;
     
     // prepare the gradient map
     std::vector< std::vector<short> > gradient;
@@ -75,9 +79,9 @@ void dijkstra2D ( vtkImageData *data, int _x1, int _y1, int _x2, int _y2, int _z
         for (unsigned i = 0; i < width; i++ )
         {
             gradient[i][j] = maxG - gradient[i][j];
-            std::cout << std::setw(4) << gradient[i][j];
+            // std::cout << std::setw(4) << gradient[i][j];
         }
-        std::cout << std::endl;
+        // std::cout << std::endl;
     }
     
     // initialize the nodes of the graph, prepare for the dijkstra algorithm
@@ -205,7 +209,7 @@ void dijkstra2D ( vtkImageData *data, int _x1, int _y1, int _x2, int _y2, int _z
     };
     
     
-    std::cout << "========distance map============" << std::endl;
+/*    std::cout << "========distance map============" << std::endl;
     // show the distance map
     for (int j = height-1; j >= 0; j--)
     {
@@ -214,7 +218,7 @@ void dijkstra2D ( vtkImageData *data, int _x1, int _y1, int _x2, int _y2, int _z
         std::cout << std::endl;
     }
     std::cout << "========path====================" << std::endl;
-    
+  */
     // show the path
     std::vector< std::vector<int> > path;
     for ( unsigned i = 0; i < width; i++ )
@@ -235,10 +239,13 @@ void dijkstra2D ( vtkImageData *data, int _x1, int _y1, int _x2, int _y2, int _z
     for (int j = height-1; j >= 0; j--)
     {
         for (unsigned i = 0; i < width; i++ ) {
-            std::cout << std::setw(4) << path[i][j];
+        //  std::cout << std::setw(4) << path[i][j];
             if (path[i][j] == 1)
+            {
                 // draw the seam
+                vxl[(z+1) * (dims[0]*dims[1]) + (y1+j) * dims[0] + x1 + i] = 1000;
                 vxl[z * (dims[0]*dims[1]) + (y1+j) * dims[0] + x1 + i] = 1000;
+            }
         }
         std::cout << std::endl;
     }
@@ -360,7 +367,7 @@ void dijkstra3D ( vtkImageData *data, int _x1, int _y1, int _z1, int _x2, int _y
     
     while (!(backward.previous == start))
     {
-        std::cout << backward.previous << std::endl;
+        // std::cout << backward.previous << std::endl;
         path[backward.previous.x][backward.previous.y][backward.previous.z] = 1;
         backward = nodes[backward.previous.x][backward.previous.y][backward.previous.z];
     };
@@ -370,8 +377,11 @@ void dijkstra3D ( vtkImageData *data, int _x1, int _y1, int _z1, int _x2, int _y
         for (unsigned i = 0; i < width; i++ )
             for (unsigned k = 0; k < depth; k++) {
                 if (path[i][j][k] == 1)
+                {
                     // draw the seam
                     vxl[(z1 + k*stepZ) * (dims[0]*dims[1]) + (y1+j*stepY) * dims[0] + x1 + i*stepX] = 1000;
+                    vxl[((z1+1) + k*stepZ) * (dims[0]*dims[1]) + (y1+j*stepY) * dims[0] + x1 + i*stepX] = 1000;
+                }
             }
     
 }
