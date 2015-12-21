@@ -1,0 +1,100 @@
+%----------------------------------------------------------------------------------------
+%    PAGE ADJUSTMENTS
+%----------------------------------------------------------------------------------------
+
+\documentclass[12pt,a4paper,hidelinks]{article}            % Article 12pt font for a4 paper while hiding links
+\usepackage[margin=1in]{geometry}                          % Required to adjust margins
+\input{../styleAndCommands}
+\title{\vspace{-3ex}3D Surface Carving with End-Point Constraints\vspace{-4ex}}
+\date{}
+\begin{document}
+\maketitle
+\section{General Definition of 3D Surface Carving}
+Given a 3D image $\vec{I}$,
+an energy map $\vec{E}$ that maps each voxel $v$ in $\vec{I}$ to a energy cost $e(v)$, and
+a set of 3D marks $P = \{P_1, P_2, ..., P_n\}$, 
+find a two manifold 3D surface $\vec{F}$ such that
+\begin{itemize}[noitemsep,nolistsep]
+\item[1.] The boundary of $\vec{F}$, denoted as $\vec{B}$, is the minimum energy closed path that connects $P$. 
+\item[2.] $\vec{F}$ is the minimum energy surface that satisfies condition 1. 
+\end{itemize}
+A typical energy map is the image's negative gradient map $\vec{E} = -|\nabla\vec{I}|$. 
+
+Condition 1 can be solved using Dijkstra's algorithm.
+The time complexity is $O(N^2)$ where N is the number of voxels in the search space. 
+
+\textbf{How about condition 2 given that we have found $\vec{B}$?}
+Worth exploring. But it is not so straight-forward and might be costly to find the optimum solution 
+since we are dealing with 3D energy map and our variable is a surface which is one dimension higher than a curve.
+
+\section{3D Surface Carving with End-Point Constraints}
+
+If we know some properties of our target surface or its boundary, we will be able to simplify the problem.
+
+One thing we know is that our boundary $\vec{B}$ is not too complex. 
+In fact we do not lose much generality if we restrict it to be ``convex'': there exists a plane $p$ such that the projection of $\vec{B}$ on $p$ is convex.
+We can then re-orient the volume coordinates such that the $xy$ plane is orthogonal to the $p$ plane. 
+
+With the new orientation, the $z$ plane parallel to the $xy$ plane for $z \in (z_l, z_u)$ intersect with $\vec{B}$ at exactly two points, 
+where $z_l$ and $z_u$ are the bottom and top points of $B$, respectively.
+
+Now we can parametrize $\vec{F}$ using the $z$ axis as $\vec{f}_z(c) \rightarrow (x, y, z)$ for $z \in [z_l, z_u]$ and $c\in[0, 1]$.
+And the boundary $\vec{B}$ tells us $\vec{f}_z(0)$ and $\vec{f}_z(1)$. 
+Our surface $\vec{F}$ becomes a sequence of minimum cost curves that connects $\vec{B}$.
+
+But this is not enough. We want the sequence of curves to change smoothly.
+In other words, we do not want $\vec{f}_z$ vary to much from $\vec{f}_{z+}$ and $\vec{f}_{z-}$.
+This is nothing but second derivative of $\vec{f}$ with respect to $c$.
+
+Now we have all the building blocks to define the problem.
+\begin{concept}{Problem Definition}
+Given $\vec{f}_{z_l}$, $\vec{f}_{z_u}$, and $\vec{f}_z(0)$ and $\vec{f}_z(1)$ for all $z \in (z_l, z_u)$, find the minimum cost path 
+$\vec{f}_z(c)$ that connects $\vec{f}_z(0)$ and $\vec{f}_z(1)$, and 
+\begin{equation}
+g(\vec{f}) = \int_0^1\|\frac{\partial^2 \vec{f}}{\partial c^2}\| dc \leq w
+\label{eqn:secondderiv}
+\end{equation}
+The $w$ is a threshold that defines how much we allow our curve to vary. It is similar to the connectivity window size in seam carving.
+\end{concept}
+
+\begin{concept}{Algorithm}
+The algorithm follows naturally. We have the bottom line (or point for degenerate case, does not matter)
+$\vec{f}_{z_l}$, and the top line $\vec{f}_{z_u}$. 
+The best place we can estimate the second derivative using finite difference is at the middle point $\displaystyle z = \frac{z_l + z_u}{2}$.
+So we can 
+\begin{enumerate}
+\item get a region that satisfies $\eqref{eqn:secondderiv}$, then
+\item find the minimum cost path within the region.
+\end{enumerate}
+And then divide the problem recursively.
+
+\vspace{5mm}
+As we discussed with all the graphs, we might not want the minimum cost path,
+but a balanced path between cost and connectivity.
+To do this we need to change step b to
+\begin{enumerate}
+\item[b'.] calculate the costs of all the paths in step a and rank them, and rank the connectivity $g$ of all the paths, pick the path with the highest combined rank.
+\end{enumerate}
+\end{concept}
+
+
+%In this particular case we can simplify the general problem by making a few assumptions:
+%\begin{itemize} [noitemsep,nolistsep]
+%\item Only four marks are required from the user: $P = \{P_1, P_2, P_3, P_4\}$.
+%\item $\partial \vec{F} = \{p_{12}, p_{23}, p_{34}, p_{14}\}$.
+%\item $P_1$ and $P_2$ are on the same transverse plane (with $z = z1$), so is $p_{12}$.
+%\item $P_3$ and $P_4$ are on the same transverse plane (with $z = z2$), so is $p_{34}$, 
+%without loss of generality we assume $z1 < z2$.
+%\item $p_{23}$ is a 3D curve but is a function of $z \in [z1, z2]$: $p_{23}(z) :\rightarrow (x, y)$, so is $p_{14}$.
+%\item The surface $\vec{F}$ is parameterized along the z-axis as a sequence of 2D curves $f(z)$.
+%$f(z)$ starts from $p_{14}(z)$ and ends at $p_{23}(z)$. $f(z_1) = p_{12}$ and $f(z_2) = p_{34}$. 
+%\item The energy map for condition 1 is the negative gradient map $-|\nabla\vec{I}|$.
+%\item The energy map for condition 2 is defined as: 
+%\begin{displaymath}
+%e(v(x, y, z)) = \frac{z2 - z}{z2 - z1}d((x,y, z1), p_{12}) + \frac{z - z1}{z2 - z1} d((x,y, z2), p_{34}) - |g(v)|  
+%\end{displaymath}
+%where $d((x, y, z), p_{12})$ denote the shortest distance between the point $(x, y, z)$ and the curve $p_{12}$. 
+%The first two items in the energy map of condition 2 is keep the connectivity between curves along z-axis.
+%\end{itemize}
+%The whole problem is now decomposed to a sequence of minimum energy curve searching problems and is straight forward to solve.
+\end{document}
