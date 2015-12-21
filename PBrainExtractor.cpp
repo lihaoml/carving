@@ -79,6 +79,7 @@ void PBrainExtractor::showBrainExtractionDialog()
     int x4 = 181, y4 = 201, z4 = z3;
     vtkImageData *data = reader->GetOutput();
     dijkstra2D (data, x1, y1, x2, y2, z1);
+    return;
     dijkstra2D (data, x3, y3, x4, y4, z3);
     
     // dijkstra3D (data, x1, y1, z1, x3, y3, z3);
